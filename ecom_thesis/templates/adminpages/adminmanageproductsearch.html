@@ -1,0 +1,68 @@
+{% extends "adminpages/adminbase.html" %}
+
+{% block title %}Admin Home{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row my-4">
+        <div class="col-sm-3">
+            <div class="list-group">
+                <div class="dropdown show">
+                    <a class="list-group-item list-group-item-action " role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Order Management</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a href="{% url 'ecomapp:receivedorder' %}" class="dropdown-item" href="">Recieved Order</a>
+                        <a href="{% url 'ecomapp:pendingorder' %}" class="dropdown-item" href="">Pending Order</a>
+                        <a href="{% url 'ecomapp:processingorder' %}" class="dropdown-item" href="">Processing Order</a>
+                        <a href="{% url 'ecomapp:completedorder' %}" class="dropdown-item" href="">Completed Order</a>
+                    </div>
+                </div>
+                <a href="{% url 'ecomapp:manageuser' %}" class="list-group-item list-group-item-action" aria-current="true">Manage User</a>
+            </div>
+            <div class="list-group my-3">
+                <a href="{% url 'ecomapp:manageproduct' %}" class="list-group-item list-group-item-action" aria-current="true">Manage Product</a>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="row ">
+                <div class="col-sm" style="top: 27px; left: 10px;">
+                    <a href="{% url 'ecomapp:adminproductcreate' %}">Add New Product</a>
+                </div>
+                <div class="col-sm">
+                    <form class="example" action="{% url 'ecomapp:manageproductsearch' %}" method="GET">
+                        <input type="text" placeholder="Search Product" name="search">
+                        <button type="submit"><i class="fa fa-search"></i></button>
+                    </form>
+                </div>
+            </div>
+            <br>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Product Name</th>
+                        <th scope="col">Image</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Brand</th>
+                        <th scope="col">Views</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in results %}
+                    <tr>
+                        <th scope="row">{{forloop.counter}}</th>
+                        <td>{{product.title}}</td>
+                        <td><img src="{{product.image.url}}" style="height: 60px;" alt=""></td>
+                        <td>P{{product.selling_price}}.00</td>
+                        <td>{{product.brand}}</td>
+                        <td>{{product.view_count}}</td>
+                        <td><i class="fas fa-edit"></i> || <i class="far fa-trash-alt"></i></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

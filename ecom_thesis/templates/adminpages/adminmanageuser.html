@@ -1,0 +1,65 @@
+{% extends "adminpages/adminbase.html" %}
+
+{% block title %}Admin Home{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row my-4">
+        <div class="col-sm-3">
+            <div class="list-group">
+                <div class="dropdown show">
+                    <a class="list-group-item list-group-item-action " role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Order Management</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a href="{% url 'ecomapp:receivedorder' %}" class="dropdown-item" href="">Recieved Order</a>
+                        <a href="{% url 'ecomapp:pendingorder' %}" class="dropdown-item" href="">Pending Order</a>
+                        <a href="{% url 'ecomapp:processingorder' %}" class="dropdown-item" href="">Processing Order</a>
+                        <a href="{% url 'ecomapp:completedorder' %}" class="dropdown-item" href="">Completed Order</a>
+                    </div>
+                </div>
+                <a href="{% url 'ecomapp:manageuser' %}" class="list-group-item list-group-item-action" aria-current="true">Manage User</a>
+            </div>
+            <div class="list-group my-3">
+                <a href="{% url 'ecomapp:manageproduct' %}" class="list-group-item list-group-item-action" aria-current="true">Manage Product</a>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="row ">
+                <div class="col-sm" style="top: 27px; left: 10px;">
+                </div>
+                <div class="col-sm">
+                    <form class="example" action="{% url 'ecomapp:manageusersearch' %}" method="GET">
+                        <input type="text" placeholder="Search User ID" name="search">
+                        <button type="submit"><i class="fa fa-search"></i></button>
+                    </form>
+                </div>
+            </div>
+            <br>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Full Name</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">Contact no</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in manageuser %}
+                    <tr>
+                        <th scope="row">{{forloop.counter}}</th>
+                        <td>{{user.full_name}}</td>
+                        <td>{{user.user.username}}</td>
+                        <td>{{user.user.email}}</td>
+                        <td>{{user.address}}</td>
+                        <td>{{user.mobile}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

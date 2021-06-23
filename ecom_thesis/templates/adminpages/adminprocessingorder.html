@@ -1,0 +1,58 @@
+{% extends "adminpages/adminbase.html" %}
+
+{% block title %}Admin Home{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row my-4">
+        <div class="col-sm-3">
+            <div class="list-group">
+                <div class="dropdown show">
+                    <a class="list-group-item list-group-item-action " role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Order Management</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a href="{% url 'ecomapp:receivedorder' %}" class="dropdown-item" href="">Recieved Order</a>
+                        <a href="{% url 'ecomapp:pendingorder' %}" class="dropdown-item" href="">Pending Order</a>
+                        <a href="{% url 'ecomapp:processingorder' %}" class="dropdown-item" href="">Processing Order</a>
+                        <a href="{% url 'ecomapp:completedorder' %}" class="dropdown-item" href="">Completed Order</a>
+                    </div>
+                </div>
+                <a href="{% url 'ecomapp:manageuser' %}" class="list-group-item list-group-item-action" aria-current="true">Manage User</a>
+            </div>
+            <div class="list-group my-3">
+                <a href="{% url 'ecomapp:manageproduct' %}" class="list-group-item list-group-item-action" aria-current="true">Manage Product</a>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Order ID</th>
+                        <th scope="col">User ID</th>
+                        <th scope="col">Customer</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Ordered On</th>
+                        <th scope="col">Ordered Status</th>
+                        <th scope="col">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in processingorders %}
+                    <tr>
+                        <th scope="row">{{forloop.counter}}</th>
+                        <td><a href="{% url 'ecomapp:adminorderdetail' order.id %}">#ORDER_{{order.id}}</a></td>
+                        <td>{{order.cart.customer.id}}</td>
+                        <td>{{order.fullname}}</td>
+                        <td>{{order.cart.customer.user.username}}</td>
+                        <td>{{order.created_at}}</td>
+                        <td>{{order.order_status}}</td>
+                        <td>P{{order.total}}.00</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

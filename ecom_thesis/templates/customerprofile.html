@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-3 border-end">
+             <div class="list-group">
+                 <div class="dropdown show">
+                    <a class="list-group-item list-group-item-action " role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Profile</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a href="{% url 'ecomapp:customerprofile' %}" class="dropdown-item" href="">My Profile</a>
+                        <a href="{% url 'ecomapp:profileupdate' %}" class="dropdown-item" href="">Update Profile</a>
+                    </div>
+                 </div>
+                <a href="{% url 'ecomapp:orderprofile' %}" class="list-group-item list-group-item-action" aria-current="true">Order</a>
+             </div>
+        </div>
+        <div class="col-md-6 my-4">
+            <h3>My Profile</h3>
+            <hr>
+            <div class="row">
+                <div class="table-responsive-sm">
+                    <table class="table-sm">
+                    <tbody>
+                        <tr>
+                            <th scope="row" style="text-align:right;">Username</th>
+                            <td style="padding-left: 20px;">{{customer.user.username}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row" style="text-align:right;">Full Name</th>
+                            <td style="padding-left: 20px;">{{customer.full_name}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row" style="text-align:right;">Email</th>
+                            <td style="padding-left: 20px;">{{customer.user.email}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row" style="text-align:right;">Phone no</th>
+                            <td style="padding-left: 20px;">{{customer.mobile}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row" style="text-align:right;">Address</th>
+                            <td style="padding-left: 20px;">{{customer.address}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row" style="text-align:right;">Gender</th>
+                            <td style="padding-left: 20px;">{{customer.gender}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row" style="text-align:right;">Birthday</th>
+                            <td style="padding-left: 20px;">{{customer.birthday}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

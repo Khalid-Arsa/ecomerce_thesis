@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}My Order{% endblock %}
+
+{% block content %}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-3">
+             <div class="list-group">
+                <div class="dropdown show">
+                    <a class="list-group-item list-group-item-action " role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Profile</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a href="{% url 'ecomapp:customerprofile' %}" class="dropdown-item" href="">My Profile</a>
+                        <a href="{% url 'ecomapp:profileupdate' %}" class="dropdown-item" href="">Update Profile</a>
+                    </div>
+                </div>
+                <a href="{% url 'ecomapp:orderprofile' %}" class="list-group-item list-group-item-action" aria-current="true">Order</a>
+             </div>
+        </div>
+        <div class="col-md-8 my-4">
+            <h3>My Orders</h3>
+            <table class="table my-3">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Order ID</th>
+                        <th>Amount</th>
+                        <th>Ordered on</th>
+                        <th>Status</th>
+                        <th>Tracking Number</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ord in orders %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td><a href="{% url 'ecomapp:customerorderdetail' ord.pk %}"> ORDER-{{ord.id}}</a></td>
+                        <td>P{{ord.total}}.00</td>
+                        <td>{{ord.created_at}}</td>
+                        <td>{{ord.order_status}}</td>
+                        {% if ord.number %}
+                            <td>{{ord.number}}</td>
+                        {% else %}
+                            <td>Tracking Number Pending</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

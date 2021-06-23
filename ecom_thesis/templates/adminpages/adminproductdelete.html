@@ -1,0 +1,21 @@
+{% extends 'adminpages/adminbase.html' %}
+
+{% block title %}Delete Product{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card card-body">
+                <p>Are you sure you want to delete "{{product}}"?</p>
+
+                <form action="{% url 'ecomapp:productdelete' product.id %}" method="POST">
+                    {% csrf_token %}
+                    <a class="btn btn-warning" href="{% url 'ecomapp:manageproduct' %}">CANCEL</a>
+                    <input class="btn btn-danger" type="submit" name="CONFIRM">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

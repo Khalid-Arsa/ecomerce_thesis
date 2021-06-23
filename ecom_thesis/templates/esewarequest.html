@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} My cart{% endblock %}
+{% block content %}
+
+    <div class="container my-5">
+        <h2>Thank you! Your order has been received!</h2>
+        <br>
+        <div class="table-responsive-sm">
+            <table class="table-sm">
+            <tbody>
+                <tr>
+                    <th scope="row" style="text-align:right;">Order ID:</th>
+                    <td style="padding-left: 20px;">{{order.id}}</td>
+                </tr>
+                <tr>
+                    <th scope="row" style="text-align:right;">Date:</th>
+                    <td style="padding-left: 20px;">{{order.created_at}}</td>
+                </tr>
+                <tr>
+                    <th scope="row" style="text-align:right;">Total:</th>
+                    <td style="padding-left: 20px;">P{{order.cart.get_orig_total}}.00</td>
+                </tr>
+                <tr>
+                    <th scope="row" style="text-align:right;">Payment Method:</th>
+                    <td style="padding-left: 20px;">Pay via Gcash</td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+        <hr>
+        <h4>Axell Austria:</h4>
+        <h5>Bank: Gcash <br>
+        Account Number: 09758469555</h5>
+        <br>
+        <h5>Send your proof of payment to minagadget@gmail.com <br>
+        09758469555</h5>
+    </div>
+
+{% endblock %}

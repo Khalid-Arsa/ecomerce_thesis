@@ -1,0 +1,4 @@
+.col-lg-4 .card-img-top{
+    height: 15rem;
+    object-fit: contain;
+}

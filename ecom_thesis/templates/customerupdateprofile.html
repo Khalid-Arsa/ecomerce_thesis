@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Profile{% endblock %}
+
+{% block content %}
+
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-3 border-end">
+             <div class="list-group">
+                <div class="dropdown show">
+                    <a class="list-group-item list-group-item-action " role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Profile</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a href="{% url 'ecomapp:customerprofile' %}" class="dropdown-item" href="">My Profile</a>
+                        <a href="{% url 'ecomapp:profileupdate' %}" class="dropdown-item" href="">Update Profile</a>
+                    </div>
+                </div>
+                <a href="{% url 'ecomapp:orderprofile' %}" class="list-group-item list-group-item-action" aria-current="true">Order</a>
+             </div>
+        </div>
+        <div class="col-md-6 my-4">
+            <h3>Update Profile</h3>
+            <hr>
+            <div class="row">
+                <form action="" method="POST" enctype="multipart/form-data">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <p {% if message.tags %} class="alert alert-{{message.tags}} mb-5"{% endif %}>{{message}}</p>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% csrf_token %}
+                    {{form.as_p}}
+                    <button class="btn btn-info">Submit Data</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

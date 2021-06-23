@@ -1,0 +1,86 @@
+{% extends 'adminpages/adminbase.html' %}
+{% load humanize %}
+
+{% block title %}Order Detail{% endblock  %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h3>Order Detail</h3>
+            <hr>
+            <div class="table-responsive-sm">
+                <table class="table-sm">
+                <tbody>
+                    <tr>
+                        <th scope="row" style="text-align:right;">Order ID:</th>
+                        <td style="padding-left: 20px;">{{ord_obj.id}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" style="text-align:right;">Order Status:</th>
+                        <td style="padding-left: 20px;">{{ord_obj.order_status}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" style="text-align:right;">Order On:</th>
+                        <td style="padding-left: 20px;">{{ord_obj.created_at}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" style="text-align:right;">Customer Info:</th>
+                        <td style="padding-left: 20px;">{{ord_obj.fullname}}, {{ord_obj.mobile}}, {{ord_obj.email}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" style="text-align:right;">Shipping Address</th>
+                        <td style="padding-left: 20px;">{{ord_obj.barangay}}, {{ord_obj.street}}, {{ord_obj.city}}, <br>
+                        {{ord_obj.province}}, {{ord_obj.postal}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" style="text-align:right;">Payment Info:</th>
+                        <td style="padding-left: 20px;">Using {{ord_obj.payment_method}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+           <br>
+            <h4>Ordered Items</h4>
+            <hr>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>SN</th>
+                        <th>Item</th>
+                        <th>Rate</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cp in ord_obj.cart.cartproduct_set.all %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td><a target="_blank"
+                                href="{% url 'ecomapp:productdetail' cp.product.slug %}">{{cp.product.title}}({{cp.product.id}})</a>
+                        </td>
+                        <td>P{{cp.rate}}.00</td>
+                        <td>{{cp.quantity}}</td>
+                        <td>P{{cp.subtotal}}.00</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <th colspan="4" class="text-right">Total: </th>
+                        <th>P{{ord_obj.cart.get_orig_total}}.00</th>
+                    </tr>
+                </tbody>
+            </table>
+            <form action="{% url 'ecomapp:adminorderstatuschange' ord_obj.id %}" method="POST">
+                {% csrf_token %}
+                <select name="status">
+                    {% for i, j in allstatus %}
+                    <option value="{{i}}" {% if i == ord_obj.order_status %}selected{% endif %}>{{j}}</option>
+                    {% endfor %}
+                </select>
+                <button class="btn btn-info">Change</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

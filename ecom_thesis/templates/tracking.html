@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Tracking {% endblock %}
+
+{% block content %}
+<div class="container">
+    <div id="main" style="text-align: center; padding: 50px;">
+        <h1>Tracking Number</h1>
+        <form method="GET">
+            <label for="number"></label>
+            <input type="text" name="number" value="{{ request.GET.number }}" placeholder="number..." style="width: 30%; padding: 10px; border: 2px solid gray; margin-bottom: 5px; margin-top: 10px;"><br>
+            <input type="submit" value="Submit" style="width: 10%; padding: 5px; border: 1px solid gray; color: gray; cursor: pointer; text-transform: uppercase;">
+        </form>
+    </div>
+    <div class="content" style="text-align: center; padding-left:250px;">
+        {% for stat in data.status %}
+            {% for t in data.time %}
+                {% if forloop.counter == forloop.parentloop.counter %}
+                    <p style="text-align: left;">{{ t }} -> {{ stat }} </p>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

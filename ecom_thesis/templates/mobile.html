@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load humanize %
+{% block title %} Mobile {% endblock %}
+
+{% block content %}
+    <div class="container my-3">
+        <div class="row">
+            <div class="col-sm-2 my-5 border-end">
+                <div class="list-group">
+                    <a href="{% url 'ecomapp:mobile' %}" class="list-group-item list-group-item-action" aria-current="true">All Mobile</a>
+                    <a href="{% url 'ecomapp:mobiledata' 'Apple' %}" class="list-group-item list-group-item-action" aria-current="true">Apple</a>
+                    <a href="{% url 'ecomapp:mobiledata' 'Samsung' %}" class="list-group-item list-group-item-action" aria-current="true">Samsung</a>
+                    <a href="{% url 'ecomapp:mobiledata' 'Huawei' %}" class="list-group-item list-group-item-action" aria-current="true">Huawei</a>
+                    <a href="{% url 'ecomapp:mobiledata' 'Nokia' %}" class="list-group-item list-group-item-action" aria-current="true">Nokia</a>
+                    <a href="{% url 'ecomapp:mobiledata' 'LG' %}" class="list-group-item list-group-item-action" aria-current="true">LG</a>
+                    <a href="{% url 'ecomapp:mobiledata' 'Lenovo' %}" class="list-group-item list-group-item-action" aria-current="true">Lenovo</a>
+                    <a href="{% url 'ecomapp:mobiledata' 'Oppo' %}" class="list-group-item list-group-item-action" aria-current="true">Oppo</a>
+                    <a href="{% url 'ecomapp:mobiledata' 'Vivo' %}" class="list-group-item list-group-item-action" aria-current="true">Vivo</a>
+                    <a href="{% url 'ecomapp:mobiledata' 'CherryMobile' %}" class="list-group-item list-group-item-action" aria-current="true">Cherry Mobile</a>
+                    <a href="{% url 'ecomapp:mobiledata' 'Xiaomi' %}" class="list-group-item list-group-item-action" aria-current="true">Xiaomi</a>
+                </div>
+            </div>
+            <div class="col-sm-10">
+                <div class="row">
+                    {% for p in mobile %}
+                    <div class="col-lg-4">
+                        <img class="card-img-top" src="{{p.image.url}}">
+                        <div class="box-element product">
+                            <h6><strong>{{p.title}}</strong></h6>
+                            <hr>
+                            <a class="btn btn-outline-primary" href="{% url 'ecomapp:addtocart' p.id %}">Add to Cart</a>
+                            <a class="btn btn-outline-success" href="{% url 'ecomapp:productdetail' p.slug %}">View</a>
+                            <p class="mt-3">Price: <strike>P{{p.marked_price}}.00</strike> P{{p.selling_price}}.00</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
