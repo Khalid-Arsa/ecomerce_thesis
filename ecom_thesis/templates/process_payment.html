@@ -57,7 +57,10 @@
                 processData: false,
                 data: formData,
                 success: function (response){
-                    console.log(response)
+                    if(response.attributes.status === "succeeded"){
+                        alert("Payment Successful")
+                        window.location.href = "{% url 'ecomapp:home' %}"
+                    }
                 }
 
             })

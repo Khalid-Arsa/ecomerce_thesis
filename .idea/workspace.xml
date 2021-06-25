@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9238cea1-39ad-43dc-85f7-7dcc3f1aa0b8" name="Default Changelist" comment="Payment Method">
+    <list default="true" id="9238cea1-39ad-43dc-85f7-7dcc3f1aa0b8" name="Default Changelist" comment="Some fixes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ecom_thesis/ecomapp/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/ecom_thesis/ecomapp/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ecom_thesis/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/ecom_thesis/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ecom_thesis/templates/process_payment.html" beforeDir="false" afterPath="$PROJECT_DIR$/ecom_thesis/templates/process_payment.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,7 +87,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1624331097485</updated>
-      <workItem from="1624612836984" duration="17733000" />
+      <workItem from="1624612836984" duration="18313000" />
     </task>
     <task id="LOCAL-00001" summary="Payment Method">
       <created>1624631416711</created>
@@ -95,7 +96,14 @@
       <option name="project" value="LOCAL" />
       <updated>1624631416711</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Some fixes">
+      <created>1624632235047</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1624632235047</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -114,6 +122,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Payment Method" />
-    <option name="LAST_COMMIT_MESSAGE" value="Payment Method" />
+    <MESSAGE value="Some fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Some fixes" />
   </component>
 </project>
