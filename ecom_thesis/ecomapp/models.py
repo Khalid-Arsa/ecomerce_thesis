@@ -18,6 +18,17 @@ GENDER_CHOICES = (
     ('Other', 'Other')
 )
 
+
+class CreditCard(models.Model):
+    card_num = models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
+    cvv = models.CharField(max_length=5)
+    exp_date = models.DateTimeField(auto_now_add=False)
+
+    def __str__(self):
+        return self.card_num
+
+
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=200)
@@ -78,6 +89,7 @@ class Cart(models.Model):
     total = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
+
     def __str__(self):
         return "Cart: " + str(self.id)
 
@@ -96,6 +108,7 @@ class CartProduct(models.Model):
     quantity = models.PositiveIntegerField()
     subtotal = models.PositiveIntegerField()
 
+
     def __str__(self):
         return "Cart: " + str(self.cart.id) + " CartProduct: " + str(self.id)
 
@@ -107,11 +120,11 @@ ORDER_STATUS = (
     ("Order Completed", "Order Completed"),
     ("Order Canceled", "Order Canceled"),
 )
-
-METHOD = (
-    ("Remittance", "Remittance"),
-    ("Gcash", "Gcash"),
-)
+#
+# METHOD = (
+#     ("Remittance", "Remittance"),
+#     ("Gcash", "Gcash"),
+# )
 
 
 class Order(models.Model):
@@ -129,9 +142,10 @@ class Order(models.Model):
     total = models.PositiveIntegerField()
     order_status = models.CharField(max_length=50, choices=ORDER_STATUS)
     created_at = models.DateTimeField(auto_now_add=True)
-    payment_method = models.CharField(max_length=20, choices=METHOD, default="Remittance")
     payment_completed = models.BooleanField(default=False, null=True, blank=True)
     number = models.CharField(max_length=20)
+    transaction_id = models.CharField(max_length=255)
+
 
     def __str__(self):
         return "Order: " + str(self.id)

@@ -19,10 +19,6 @@ urlpatterns = [
 
     path("checkout/", CheckoutView.as_view(), name="checkout"),
 
-    path("remittance/", RemittanceView.as_view(), name="khaltirequest"),
-
-    path("gcash/", GcashView.as_view(), name="esewarequest"),
-
     path("register/", CustomerRegistrationView.as_view(), name="customerregistration"),
     path('login/', CustomerLoginView.as_view(), name='customerlogin'),
 
@@ -72,7 +68,6 @@ urlpatterns = [
     path("customer-profile-update/", views.CustomerUpdateProfile, name="profileupdate"),
     path('tracking-number/', tracking, name='tracking'),
 
-    path('process-payment/', process_payment, name='process_payment'),
-    path('payment-done/', payment_done, name='payment_done'),
-    path('payment-cancelled/', payment_canceled, name='payment_cancelled'),
+    path('make_payment', make_payment, name='make_payment'),
+    path('process_payment', process_payment, name='process_payment'),
 ]

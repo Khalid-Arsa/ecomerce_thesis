@@ -3,31 +3,39 @@ from .models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UsernameField
 from django.utils.encoding import smart_text
-
-
+from creditcards.forms import CardNumberField, CardExpiryField, SecurityCodeField
 
 
 class CheckoutForm(forms.ModelForm):
-    fullname = forms.CharField(widget=forms.TextInput(attrs={'autofocus':True, 'class':'form-control'}))
-    barangay = forms.CharField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control'}))
-    street = forms.CharField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control', 'placeholder': 'Building, street and etc'}))
-    city = forms.CharField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control'}))
-    province = forms.CharField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control'}))
-    postal = forms.CharField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control'}))
-    mobile = forms.IntegerField(widget=forms.TextInput(attrs={'autofocus':True, 'class':'form-control'}))
-    email = forms.CharField(widget=forms.TextInput(attrs={'autofocus':True, 'class':'form-control'}))
+    fullname = forms.CharField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control',
+                                                             'value': 'Elijah Abgao'}))
+    barangay = forms.CharField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control',
+                                                             'value': 'Lumbia'}))
+    street = forms.CharField(widget=forms.TextInput(
+        attrs={'autofocus': True, 'class': 'form-control', 'placeholder': 'Building, street and etc',
+               'value': 'Block 12'}))
+    city = forms.CharField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control',
+                                                         'value': 'Cagayan'}))
+    province = forms.CharField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control',
+                                                             'value': 'Foobar'}))
+    postal = forms.CharField(
+        widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control', 'value': '9000'}))
+    mobile = forms.IntegerField(
+        widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control', 'value': '09953875103'}))
+    email = forms.CharField(
+        widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control', 'value': 'abgaoe@gmail.com'}))
 
     class Meta:
         model = Order
         fields = ["fullname", "mobile", "email", "barangay", "street",
-                  "city", "province", "postal", "payment_method"]
-
+                  "city", "province", "postal"]
 
 
 class CustomerRegistrationForm(forms.ModelForm):
-    username = UsernameField(widget=forms.TextInput(attrs={'autofocus':True, 'class':'form-control'}))
-    email = forms.CharField(required=True, widget=forms.EmailInput(attrs={'class':'form-control'}))
-    password = forms.CharField(label='Password', strip=False, widget=forms.PasswordInput(attrs={'autocomplete': 'current-password', 'class': 'form-control'}))
+    username = UsernameField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control'}))
+    email = forms.CharField(required=True, widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    password = forms.CharField(label='Password', strip=False, widget=forms.PasswordInput(
+        attrs={'autocomplete': 'current-password', 'class': 'form-control'}))
 
     class Meta:
         model = Customer
@@ -41,9 +49,12 @@ class CustomerRegistrationForm(forms.ModelForm):
 
         return uname
 
+
 class CustomerLoginForm(forms.Form):
-    username = UsernameField(widget=forms.TextInput(attrs={'autofocus':True, 'class':'form-control'}))
-    password = forms.CharField(label='Password', strip=False, widget=forms.PasswordInput(attrs={'autocomplete': 'current-password', 'class': 'form-control'}))
+    username = UsernameField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control'}))
+    password = forms.CharField(label='Password', strip=False, widget=forms.PasswordInput(
+        attrs={'autocomplete': 'current-password', 'class': 'form-control'}))
+
 
 class TrackingForm(forms.ModelForm):
     class Meta:
@@ -55,6 +66,13 @@ class TrackingForm(forms.ModelForm):
                 "placeholder": "Enter the tracking number here..."
             })
         }
+
+
+class CreditCardForm(forms.Form):
+    cc_number = CardNumberField(label='Card Number')
+    cc_expiry = CardExpiryField(label='Expiration Date')
+    cc_code = SecurityCodeField(label='CVV/CVC')
+
 
 class ProductForm(forms.ModelForm):
     more_images = forms.FileField(required=False, widget=forms.FileInput(attrs={
@@ -137,7 +155,9 @@ class PasswordResetForm(forms.Form):
                 "New Passwords did not match!")
         return confirm_new_password
 
-YEARS= [x for x in range(1900,3000)]
+
+YEARS = [x for x in range(1900, 3000)]
+
 
 class CustomerForm(forms.ModelForm):
     full_name = forms.CharField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control'}))
@@ -149,4 +169,3 @@ class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
         fields = ['full_name', 'mobile', 'address', 'gender', 'birthday']
-

@@ -1,15 +1,13 @@
 from django.views.generic import TemplateView, CreateView, FormView, DetailView, ListView
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
+import random
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from .utils import password_reset_token
 from django.core.mail import send_mail
-from django.http import JsonResponse
-from django.conf import settings
 from django.db.models import Q
-from .models import *
 from .forms import *
 from django.views import View
 from django.contrib import messages
@@ -17,9 +15,10 @@ import base64
 from bs4 import BeautifulSoup
 import requests
 from django.conf import settings
-from decimal import Decimal
-from paypal.standard.forms import PayPalPaymentsForm
-from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from paymongo import Paymongo
+
+secret_key = "sk_test_qmxKFFtQ6cNao7vr9mT4X3xQ"
 
 
 class EcomMixin(object):
@@ -89,7 +88,8 @@ class AddToCartView(EcomMixin, TemplateView):
             # new item is added in cart
             else:
                 cartproduct = CartProduct.objects.create(
-                    cart=cart_obj, product=product_obj, rate=product_obj.selling_price, quantity=1, subtotal=product_obj.selling_price
+                    cart=cart_obj, product=product_obj, rate=product_obj.selling_price, quantity=1,
+                    subtotal=product_obj.selling_price
                 )
                 cart_obj.total += product_obj.selling_price
 
@@ -99,11 +99,13 @@ class AddToCartView(EcomMixin, TemplateView):
             cart_obj = Cart.objects.create(total=0)
             self.request.session['cart_id'] = cart_obj.id
             cartproduct = CartProduct.objects.create(
-                cart=cart_obj, product=product_obj, rate=product_obj.selling_price, quantity=1, subtotal=product_obj.selling_price)
+                cart=cart_obj, product=product_obj, rate=product_obj.selling_price, quantity=1,
+                subtotal=product_obj.selling_price)
             cart_obj.total += product_obj.selling_price
             cart_obj.save()
 
         return context
+
 
 def crawl(tracking):
     content = list()
@@ -126,6 +128,7 @@ def tracking(request):
         tracking = request.GET.get('number')
         data = crawl(tracking)
     return render(request, 'tracking.html', {'data': data[0]})
+
 
 class ManageCartView(EcomMixin, View):
     def get(self, request, *args, **kwargs):
@@ -159,7 +162,6 @@ class ManageCartView(EcomMixin, View):
 
 
 def mobile(request, data=None):
-
     if data == None:
         mobile = Product.objects.filter(category='M')
     elif data == 'Samsung' or data == 'Apple':
@@ -175,6 +177,7 @@ def mobile(request, data=None):
 
     context = {'mobile': mobile}
     return render(request, 'mobile.html', context)
+
 
 class ManageCartView(EcomMixin, View):
     def get(self, request, *args, **kwargs):
@@ -259,12 +262,13 @@ class CheckoutView(EcomMixin, CreateView):
         cart_id = self.request.session.get("cart_id")
         if cart_id:
             cart_obj = Cart.objects.get(id=cart_id)
+
             form.instance.cart = cart_obj
             form.instance.subtotal = cart_obj.total
             form.instance.discount = 0
             form.instance.total = cart_obj.total
             form.instance.order_status = "Order Received"
-            form.cleaned_data.get("payment_method")
+            form.instance.transaction_id = generate_id(False)
             form.cleaned_data.get("fullname")
             form.cleaned_data.get("mobile")
             form.cleaned_data.get("email")
@@ -273,67 +277,91 @@ class CheckoutView(EcomMixin, CreateView):
             form.cleaned_data.get("city")
             form.cleaned_data.get("province")
             form.cleaned_data.get("postal")
+
             del self.request.session['cart_id']
             order = form.save()
 
-            return redirect(reverse("ecomapp:process_payment") + "?o_id=" + str(order.id))
+            return redirect(reverse("ecomapp:make_payment") + "?o_id=" + str(order.id))
 
         else:
-            return redirect("ecomapp:process_payment")
-        return super().form_valid(form)
+            return redirect("ecomapp:make_payment")
 
 
-def process_payment(request):
-    order_id = request.session.get('order_id')
+def generate_id(is_num=False):
+    saltable_string = "1234567890abcdefghijklmnopqrstuvwxyz"
+    saltable_string_num = "1234567890"
+    id = ""
+    for x in range(10):
+        id += (saltable_string[random.randint(0, 35)] if is_num else saltable_string_num[random.randint(0, 9)])
+    return id
+
+
+def make_payment(request):
+    order_id = request.GET.get('o_id')
     order = Order.objects.get(id=order_id)
-    host = request.get_host()
+    order_all = Order.objects.filter(id=order_id)
 
-    paypal_dict = {
-        'business': settings.PAYPAL_RECEIVER_EMAIL,
-        'amount': '%.2f' % order.get_orig_total().quantize(
-            Decimal('.01')),
-        'item_name': 'Order {}'.format(order.id),
-        'invoice': str(order.id),
-        'currency_code': 'USD',
-        'notify_url': 'http://{}{}'.format(host,
-                                           reverse('paypal-ipn')),
-        'return_url': 'http://{}{}'.format(host,
-                                           reverse('payment_done')),
-        'cancel_return': 'http://{}{}'.format(host,
-                                              reverse('payment_cancelled')),
+    # create payload
+    product_payload = {
+        "total": int(str(format(order.total, '.2f')).replace('.', '')),
+        "transact_id": order.transaction_id
     }
+    if order_id is None:
+        return redirect(reverse('ecomapp:home'))
 
-    form = PayPalPaymentsForm(initial=paypal_dict)
-    return render(request, 'process_payment.html', {'order': order, 'form': form})
-
-@csrf_exempt
-def payment_done(request):
-    return render(request, 'payment_done.html')
-
-
-@csrf_exempt
-def payment_canceled(request):
-    return render(request, 'payment_cancelled.html')
+    else:
+        print(product_payload)
+        form = CreditCardForm()
+    return render(request, 'process_payment.html', {'form': form, 'product_payload': product_payload})
 
 
+# Data Entrypoint only
+def process_payment(request):
+    payment_payload = {}
 
-class RemittanceView(View):
-    def get(self, request, *args, **kwargs):
-        o_id = request.GET.get("o_id")
-        order = Order.objects.get(id=o_id)
-        context = {
-            "order": order
+    if request.method == 'POST':
+        card_num = request.POST.get('cc_number')
+        exp_year = int(str(request.POST.get('cc_expiry')).split('/')[1])
+        exp_month = int(str(request.POST.get('cc_expiry')).split('/')[0])
+        cvv = request.POST.get('cc_code')
+        paymongo = Paymongo(secret_key)
+        print(exp_year)
+        print(int(request.POST.get('total')))
+        payment_method_payload = {
+            "data": {
+                "attributes": {"type": "card",
+                               "details": {"card_number": card_num, "exp_month": exp_month, "exp_year": exp_year,
+                                           "cvc": cvv}
+                               }
+            }
         }
-        return render(request, "khaltirequest.html", context)
 
-class GcashView(View):
-    def get(self, request, *args, **kwargs):
-        o_id = request.GET.get("o_id")
-        order = Order.objects.get(id=o_id)
-        context = {
-            "order": order
+        payment_intent_payload = {
+            "data": {
+                "attributes": {"amount": int(request.POST.get('total')), "payment_method_allowed": ["card"],
+                               "description": str(f"#{request.POST.get('transaction_id')}"),
+                               "statement_descriptor": "test2",
+                               "payment_method_options": {"card": {"request_three_d_secure": "automatic"}},
+                               "currency": "PHP"}
+            }
         }
-        return render(request, "esewarequest.html", context)
+
+        intent_data = paymongo.payment_intents.create(payment_intent_payload)
+        method_data = paymongo.payment_methods.create(payment_method_payload)
+        intent_id = intent_data['id']
+        method_id = method_data['id']
+
+        payload = {
+            "data": {
+                "attributes": {
+                    "client_key": intent_id,
+                    "payment_method": method_id
+                }
+
+            }
+        }
+
+        return JsonResponse(paymongo.payment_intents.attach(intent_id, payload))
 
 
 class CustomerRegistrationView(CreateView):
@@ -357,12 +385,12 @@ class CustomerRegistrationView(CreateView):
         else:
             return self.success_url
 
+
 class CustomerLoginView(FormView):
     template_name = "customerlogin.html"
     form_class = CustomerLoginForm
     success_url = reverse_lazy("ecomapp:home")
 
-    # form_valid method is a type of post method and is available in createview formview and updateview
     def form_valid(self, form):
         uname = form.cleaned_data.get("username")
         pword = form.cleaned_data["password"]
@@ -380,7 +408,6 @@ class CustomerLoginView(FormView):
             return next_url
         else:
             return self.success_url
-
 
 
 class CustomerLogoutView(View):
@@ -415,6 +442,7 @@ class CustomerProfileView(TemplateView):
         context["orders"] = orders
         return context
 
+
 class MyOrderView(TemplateView):
     template_name = "order.html"
 
@@ -432,6 +460,7 @@ class MyOrderView(TemplateView):
         orders = Order.objects.filter(cart__customer=customer).order_by("-id")
         context["orders"] = orders
         return context
+
 
 class CustomerOrderDetailView(DetailView):
     template_name = "customerorderdetail.html"
@@ -476,7 +505,7 @@ class PasswordForgotView(FormView):
         # send mail to the user with email
         text_content = 'Please Click the link below to reset your password. '
         html_content = url + "/password-reset/" + email + \
-            "/" + password_reset_token.make_token(user) + "/"
+                       "/" + password_reset_token.make_token(user) + "/"
         send_mail(
             'Password Reset Link | Django Ecommerce',
             text_content + html_content,
@@ -510,6 +539,7 @@ class PasswordResetView(FormView):
         user.set_password(password)
         user.save()
         return super().form_valid(form)
+
 
 # admin pages
 class AdminLoginView(FormView):
@@ -545,7 +575,7 @@ class AdminHomeView(AdminRequiredMixin, TemplateView):
         context["pendingorders"] = Order.objects.filter(order_status="Order Received").order_by("-id")
         return context
 
-#	Order ID	Customer	Ordered On	Ordered Status	Amount
+
 class AdminOrderDetailView(AdminRequiredMixin, DetailView):
     template_name = "adminpages/adminorderdetail.html"
     model = Order
@@ -600,6 +630,7 @@ class AdminReceivedView(AdminRequiredMixin, TemplateView):
         context["receivedorders"] = Order.objects.filter(order_status="Order Received").order_by("-id")
         return context
 
+
 class AdminPendingView(AdminRequiredMixin, TemplateView):
     template_name = "adminpages/adminpendingorder.html"
 
@@ -607,6 +638,7 @@ class AdminPendingView(AdminRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context["pendingorders"] = Order.objects.filter(order_status="Order Pending").order_by("-id")
         return context
+
 
 class AdminProcessingView(AdminRequiredMixin, TemplateView):
     template_name = "adminpages/adminprocessingorder.html"
@@ -616,6 +648,7 @@ class AdminProcessingView(AdminRequiredMixin, TemplateView):
         context["processingorders"] = Order.objects.filter(order_status="Order Processing").order_by("-id")
         return context
 
+
 class AdminCompletedView(AdminRequiredMixin, TemplateView):
     template_name = "adminpages/admincompletedorder.html"
 
@@ -624,6 +657,7 @@ class AdminCompletedView(AdminRequiredMixin, TemplateView):
         context["completedorders"] = Order.objects.filter(order_status="Order Completed").order_by("-id")
         return context
 
+
 class AdminManageUserView(AdminRequiredMixin, TemplateView):
     template_name = "adminpages/adminmanageuser.html"
 
@@ -631,6 +665,7 @@ class AdminManageUserView(AdminRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context["manageuser"] = Customer.objects.all().order_by("-id")
         return context
+
 
 class AdminManageUserSearchView(AdminRequiredMixin, TemplateView):
     template_name = "adminpages/adminmanageusersearch.html"
@@ -642,6 +677,7 @@ class AdminManageUserSearchView(AdminRequiredMixin, TemplateView):
         context["results"] = results
         return context
 
+
 class AdminManageProductView(AdminRequiredMixin, TemplateView):
     template_name = "adminpages/adminmanageproduct.html"
 
@@ -649,6 +685,7 @@ class AdminManageProductView(AdminRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context["manageproduct"] = Product.objects.all().order_by("-id")
         return context
+
 
 class AdminManageProductSearchView(AdminRequiredMixin, TemplateView):
     template_name = "adminpages/adminmanageproductsearch.html"
@@ -660,6 +697,7 @@ class AdminManageProductSearchView(AdminRequiredMixin, TemplateView):
         print(results)
         context["results"] = results
         return context
+
 
 def AdminProductAdmin(request, pk):
     product = Product.objects.get(id=pk)
@@ -676,15 +714,17 @@ def AdminProductAdmin(request, pk):
 
     return render(request, 'adminpages/adminproductupdate.html', context)
 
+
 def AdminProductDelete(request, pk):
     product = Product.objects.get(id=pk)
     if request.method == 'POST':
         product.delete()
         return redirect('ecomapp:manageproduct')
 
-    context = {'product':product}
+    context = {'product': product}
 
     return render(request, 'adminpages/adminproductdelete.html', context)
+
 
 @login_required
 def CustomerUpdateProfile(request):
@@ -696,6 +736,5 @@ def CustomerUpdateProfile(request):
             form.save()
             messages.success(request, 'Congratulations! Profile Updated Successfully')
 
-    context = {'form':form}
+    context = {'form': form}
     return render(request, 'customerupdateprofile.html', context)
-

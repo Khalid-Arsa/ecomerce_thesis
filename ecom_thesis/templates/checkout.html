@@ -48,79 +48,12 @@
                         {{fm.label_tag}} {{fm}} <small class="text-danger">{{fm.errors|striptags}}</small>
                     </div>
                 {% endfor %}
-                <div class="container" style="background-color: #DCDCDC; padding-top: 10px; padding-bottom: 5px;">
-                    <p>Pay via Local Money Transfer (Palawan or Cebuana Lhuillier) and Gcash, item sent after payment is confirmed. Please use your Order ID as the payment reference. Your order will not be shipped until the funds have cleared in our account.</a></p>
-                </div>
                 <br>
                 <button class="btn btn-info">Place order</button>
             </form>
-<!--            <div id="paypal-button-container">-->
-<!--            </div>-->
         </div>
     </div>
 </div>
 
-<!--<script src="https://www.paypal.com/sdk/js?client-id=AfTFk1JFbbE-tAAnUS_wTDn3k36BHBXmgghrhfcErf5HJDyDRtbmt43h9CA641DOWfz9AUCMUrj-hyW7&currency=USD"></script>-->
-
-<!--<script>-->
-<!--    function getCookie(name) {-->
-<!--        let cookieValue = null;-->
-<!--        if (document.cookie && document.cookie !== '') {-->
-<!--            const cookies = document.cookie.split(';');-->
-<!--            for (let i = 0; i < cookies.length; i++) {-->
-<!--                const cookie = cookies[i].trim();-->
-<!--                // Does this cookie string begin with the name we want?-->
-<!--                if (cookie.substring(0, name.length + 1) === (name + '=')) {-->
-<!--                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));-->
-<!--                    break;-->
-<!--                }-->
-<!--            }-->
-<!--        }-->
-<!--        return cookieValue;-->
-<!--    }-->
-<!--    var csrftoken = getCookie('csrftoken');-->
-
-<!--    var total = '{{cart.get_orig_total}}'-->
-<!--    var cartId = '{{cart.id}}'-->
-
-<!--    function completeOrder(){-->
-<!--        var url = '{% url 'ecomapp:khaltirequest' %}'-->
-
-<!--        fetch(url, {-->
-<!--            method: 'POST',-->
-<!--            headers: {-->
-<!--                'Content-type': 'application/json',-->
-<!--                'X-CSRFToken': csrftoken-->
-<!--            },-->
-<!--            body.JSON.stringify({'cartId': cartId})-->
-<!--        })-->
-<!--    }-->
-
-<!--    // Render the PayPal button into #paypal-button-container-->
-<!--    paypal.Buttons({-->
-
-<!--        // Set up the transaction-->
-<!--        createOrder: function(data, actions) {-->
-<!--            return actions.order.create({-->
-<!--                purchase_units: [{-->
-<!--                    amount: {-->
-<!--                        value: total-->
-<!--                    }-->
-<!--                }]-->
-<!--            });-->
-<!--        },-->
-
-<!--        // Finalize the transaction-->
-<!--        onApprove: function(data, actions) {-->
-<!--            return actions.order.capture().then(function(details) {-->
-<!--                // Show a success message to the buyer-->
-<!--                completeOrder()-->
-<!--                alert('Transaction completed by ' + details.payer.name.given_name + '!');-->
-<!--            });-->
-<!--        }-->
-
-
-<!--    }).render('#paypal-button-container');-->
-<!--</script>-->
 
 {% endblock %}
