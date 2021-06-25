@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+
+
 # Create your models here.
 
 
@@ -11,6 +13,7 @@ class Admin(models.Model):
 
     def __str__(self):
         return self.user.username
+
 
 GENDER_CHOICES = (
     ('Male', 'Male'),
@@ -89,7 +92,6 @@ class Cart(models.Model):
     total = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
-
     def __str__(self):
         return "Cart: " + str(self.id)
 
@@ -108,7 +110,6 @@ class CartProduct(models.Model):
     quantity = models.PositiveIntegerField()
     subtotal = models.PositiveIntegerField()
 
-
     def __str__(self):
         return "Cart: " + str(self.cart.id) + " CartProduct: " + str(self.id)
 
@@ -120,6 +121,8 @@ ORDER_STATUS = (
     ("Order Completed", "Order Completed"),
     ("Order Canceled", "Order Canceled"),
 )
+
+
 #
 # METHOD = (
 #     ("Remittance", "Remittance"),
@@ -145,7 +148,6 @@ class Order(models.Model):
     payment_completed = models.BooleanField(default=False, null=True, blank=True)
     number = models.CharField(max_length=20)
     transaction_id = models.CharField(max_length=255)
-
 
     def __str__(self):
         return "Order: " + str(self.id)
