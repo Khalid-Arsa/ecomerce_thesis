@@ -13,16 +13,16 @@
 
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Credit Card</button>
+                        <button class="nav-link active" id="credit-tab" data-bs-toggle="tab" data-bs-target="#credit" type="button" role="tab" aria-controls="credit" aria-selected="true">Credit Card</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">GCash</button>
+                        <button class="nav-link" id="gcash-tab" data-bs-toggle="tab" data-bs-target="#gcash" type="button" role="tab" aria-controls="gcash" aria-selected="false">GCash</button>
                     </li>
                 </ul>
 
                 <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                        <form action="" method="post" id="frmCreditCard">
+                    <div class="tab-pane fade show active" id="credit" role="tabpanel" aria-labelledby="credit">
+                        <form id="frmCreditCard">
                             <input hidden type="text" name="transaction_id" value="{{ product_payload.transact_id }}">
                             <input hidden type="text" name="total" value="{{ product_payload.total }}">
                             {% csrf_token %}
@@ -37,7 +37,19 @@
 
 
                     </div>
-                    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">B</div>
+                    <div class="tab-pane fade" id="gcash" role="tabpanel" aria-labelledby="gcash">
+                        <form id="frmGcash">
+                            <label>
+                                Transaction ID:
+                                <input type="text" name="transaction_id" value="{{ product_payload.transact_id }}" readonly>
+                            </label><br>
+                            <input hidden type="text" name="total" value="{{ product_payload.total }}">
+                            {% csrf_token %}
+                            <input type="submit" value="Pay With Gcash" class="btn btn-primary" >
+                        </form>
+
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -45,10 +57,15 @@
 
 
     <script>
-        $('form').on('submit', function (e){
+        let method = "credit"
+        $('[data-bs-toggle="tab"]').on('shown.bs.tab', function(e){
+            method = e.target.attributes[6].nodeValue
+        })
+
+        $('#frmCreditCard').on('submit', function (e){
             e.preventDefault()
             let formData = new FormData(document.getElementById("frmCreditCard"));
-
+            formData.append('method', method)
             $.ajax({
                 url: "{% url 'ecomapp:process_payment' %}",
                 method: 'post',
@@ -61,6 +78,29 @@
                         alert("Payment Successful")
                         window.location.href = "{% url 'ecomapp:home' %}"
                     }
+                }
+
+            })
+        })
+
+        $('#frmGcash').on('submit', function (e){
+            e.preventDefault()
+            let formData = new FormData(document.getElementById("frmGcash"));
+            formData.append('method', method)
+            console.log(formData)
+            $.ajax({
+                url: "{% url 'ecomapp:process_payment' %}",
+                method: 'post',
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                data: formData,
+                success: function (response){
+                    window.open(response.checkout_url)
+
+
+                    $.get( `{% url 'ecomapp:finalize_payment' %}?api_id=${response.id}&transaction_id=${formData.get('transaction_id')}&amount=${formData.get('total')}`, function( data ) {
+                    });
                 }
 
             })

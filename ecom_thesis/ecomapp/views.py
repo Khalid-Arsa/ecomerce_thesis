@@ -1,3 +1,5 @@
+import time
+import threading
 from django.views.generic import TemplateView, CreateView, FormView, DetailView, ListView
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
@@ -310,7 +312,6 @@ def make_payment(request):
         return redirect(reverse('ecomapp:home'))
 
     else:
-        print(product_payload)
         form = CreditCardForm()
     return render(request, 'process_payment.html', {'form': form, 'product_payload': product_payload})
 
@@ -320,48 +321,106 @@ def process_payment(request):
     payment_payload = {}
 
     if request.method == 'POST':
-        card_num = request.POST.get('cc_number')
-        exp_year = int(str(request.POST.get('cc_expiry')).split('/')[1])
-        exp_month = int(str(request.POST.get('cc_expiry')).split('/')[0])
-        cvv = request.POST.get('cc_code')
-        paymongo = Paymongo(secret_key)
-        print(exp_year)
-        print(int(request.POST.get('total')))
-        payment_method_payload = {
-            "data": {
-                "attributes": {"type": "card",
-                               "details": {"card_number": card_num, "exp_month": exp_month, "exp_year": exp_year,
-                                           "cvc": cvv}
-                               }
-            }
+        method = request.POST.get('method')
+        payment_handler = {}
+        product_payload = {
+            'total': int(request.POST.get('total')),
+            'transaction_id': str(f"{request.POST.get('transaction_id')}")
         }
 
-        payment_intent_payload = {
-            "data": {
-                "attributes": {"amount": int(request.POST.get('total')), "payment_method_allowed": ["card"],
-                               "description": str(f"#{request.POST.get('transaction_id')}"),
-                               "statement_descriptor": "test2",
-                               "payment_method_options": {"card": {"request_three_d_secure": "automatic"}},
-                               "currency": "PHP"}
-            }
+        if method == "credit":
+            payment_handler = credit_payment(request.POST.get('cc_number'),
+                                             int(str(request.POST.get('cc_expiry')).split('/')[1]),
+                                             int(str(request.POST.get('cc_expiry')).split('/')[0]),
+                                             request.POST.get('cc_code'), product_payload)
+        elif method == "gcash":
+            payment_handler = ewallet_payment_intent(request, product_payload)
+
+        return JsonResponse(payment_handler)
+
+
+# Credit Card
+def credit_payment(card_num, exp_year, exp_month, cvc, transaction_data):
+    paymongo = Paymongo(secret_key)
+    payment_method_payload = {
+        "data": {
+            "attributes": {"type": "card",
+                           "details": {"card_number": card_num, "exp_month": exp_month, "exp_year": exp_year,
+                                       "cvc": cvc}
+                           }
         }
-
-        intent_data = paymongo.payment_intents.create(payment_intent_payload)
-        method_data = paymongo.payment_methods.create(payment_method_payload)
-        intent_id = intent_data['id']
-        method_id = method_data['id']
-
-        payload = {
-            "data": {
-                "attributes": {
-                    "client_key": intent_id,
-                    "payment_method": method_id
-                }
-
-            }
+    }
+    payment_intent_payload = {
+        "data": {
+            "attributes": {"amount": transaction_data['total'], "payment_method_allowed": ["card"],
+                           "description": transaction_data['transaction_id'],
+                           "statement_descriptor": "test2",
+                           "payment_method_options": {"card": {"request_three_d_secure": "automatic"}},
+                           "currency": "PHP"}
         }
+    }
+    intent_data = paymongo.payment_intents.create(payment_intent_payload)
+    method_data = paymongo.payment_methods.create(payment_method_payload)
+    intent_id = intent_data['id']
+    method_id = method_data['id']
 
-        return JsonResponse(paymongo.payment_intents.attach(intent_id, payload))
+    payload = {
+        "data": {
+            "attributes": {
+                "client_key": intent_id,
+                "payment_method": method_id
+            }
+
+        }
+    }
+
+    return paymongo.payment_intents.attach(intent_id, payload)
+
+
+# GCash
+def ewallet_payment_intent(request, transaction_data):
+    paymongo = Paymongo(secret_key)
+    payment_source_payload = {
+        "data": {
+            "attributes": {"type": "gcash",
+                           "amount": int(transaction_data['total']),
+                           "currency": "PHP",
+                           "redirect": {
+                               "success": str(request.build_absolute_uri(f"{reverse('ecomapp:payment_successful')}?order_id={transaction_data['transaction_id']}")),
+                               "failed": str(request.build_absolute_uri(reverse('ecomapp:payment_failed')))
+                           }
+                           }
+        }
+    }
+    response_source = paymongo.sources.create(payment_source_payload)
+    return response_source
+
+
+def finalize_payment(request):
+    paymongo = Paymongo(secret_key)
+    time.sleep(15)
+    payment_payload = {
+        "data": {
+            "attributes": {"description": str(request.GET['transaction_id']),
+                           "statement_descriptor": "Mina Gadget Store",
+                           "amount": int(request.GET['amount']),
+                           "currency": "PHP",
+                           "source": {
+                               "id": request.GET['api_id'],
+                               "type": "source"
+                           }
+                           }
+        }
+    }
+    return JsonResponse(paymongo.payments.create(payment_payload))
+
+
+def payment_successful(request):
+    return render(request, "payment_done.html")
+
+
+def payment_failed(request):
+    return render(request, "payment_cancelled.html")
 
 
 class CustomerRegistrationView(CreateView):

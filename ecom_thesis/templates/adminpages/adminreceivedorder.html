@@ -29,12 +29,14 @@
                         <th scope="col">#</th>
                         <th scope="col">Order ID</th>
                         <th scope="col">User ID</th>
+
                         <th scope="col">Track #</th>
                         <th scope="col">Customer</th>
                         <th scope="col">Username</th>
                         <th scope="col">Ordered On</th>
                         <th scope="col">Ordered Status</th>
                         <th scope="col">Amount</th>
+                        <th scope="col">Transaction ID</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -49,6 +51,7 @@
                         <td>{{order.created_at}}</td>
                         <td>{{order.order_status}}</td>
                         <td>P{{order.total}}.00</td>
+                        <td>{{order.transaction_id}}</td>
                         <td><a href="{% url 'ecomapp:admintracking' order.id %}">Track Number</a></td>
                     </tr>
                     {% endfor %}

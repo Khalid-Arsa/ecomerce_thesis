@@ -70,4 +70,7 @@ urlpatterns = [
 
     path('make_payment', make_payment, name='make_payment'),
     path('process_payment', process_payment, name='process_payment'),
+    path('payment_failed', payment_failed, name='payment_failed'),
+    path('payment_successful', payment_successful, name='payment_successful'),
+    path('finalize_payment', finalize_payment, name='finalize_payment'),
 ]
