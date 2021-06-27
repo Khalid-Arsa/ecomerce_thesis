@@ -773,6 +773,21 @@ def AdminProductAdmin(request, pk):
 
     return render(request, 'adminpages/adminproductupdate.html', context)
 
+def AdminTrackingView(request, pk):
+    track = Order.objects.get(id=pk)
+    form = TrackingForm(instance=track)
+    if request.method == 'POST':
+        form = TrackingForm(request.POST, instance=track)
+        if form.is_valid():
+            form.save()
+            return redirect('ecomapp:receivedorder')
+
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'adminpages/adminproductupdate.html', context)
+
 
 def AdminProductDelete(request, pk):
     product = Product.objects.get(id=pk)
@@ -783,6 +798,7 @@ def AdminProductDelete(request, pk):
     context = {'product': product}
 
     return render(request, 'adminpages/adminproductdelete.html', context)
+
 
 
 @login_required
