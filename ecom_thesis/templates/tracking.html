@@ -8,20 +8,32 @@
         <h1>Tracking Number</h1>
         <form method="GET">
             <label for="number"></label>
-            <input type="text" name="number" value="{{ request.GET.number }}" placeholder="number..." style="width: 30%; padding: 10px; border: 2px solid gray; margin-bottom: 5px; margin-top: 10px;"><br>
-            <input type="submit" value="Submit" style="width: 10%; padding: 5px; border: 1px solid gray; color: gray; cursor: pointer; text-transform: uppercase;">
+            <div class="input-group mb-3">
+                <button class="btn btn-outline-secondary" type="submit" value="Submit" id="button-addon1">Submit</button>
+                <input type="text" name="number" value="{{ request.GET.number }}" placeholder="number..." class="form-control" aria-label="Example text with button addon" aria-describedby="button-addon1">
+            </div>
         </form>
     </div>
-    <div class="content" style="text-align: center; padding-left:250px;">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Track</th>
+            </tr>
+        </thead>
         {% for stat in data.status %}
             {% for t in data.time %}
                 {% if forloop.counter == forloop.parentloop.counter %}
-                    <p style="text-align: left;">{{ t }} -> {{ stat }} </p>
+                    <tbody>
+                        <tr>
+                          <td>{{ t }}</td>
+                          <td>{{ stat }}</td>
+                        </tr>
+                    </tbody>
                 {% endif %}
             {% endfor %}
         {% endfor %}
-    </div>
-
+    </table>
 </div>
 
 {% endblock %}

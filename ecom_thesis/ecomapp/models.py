@@ -47,7 +47,6 @@ class Customer(models.Model):
 
 CATEGORY_CHOICES = (
     ('M', 'Mobile'),
-    ('A', 'Accessories'),
 )
 
 BRAND_CHOICES = (

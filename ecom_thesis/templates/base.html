@@ -25,50 +25,50 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="{% url 'ecomapp:home' %}">Mina Gadget</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="{% url 'ecomapp:home' %}">Mina Gadget</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="{% url 'ecomapp:home' %}">Home</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="{% url 'ecomapp:tracking' %}">Track My Order</a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Electronics
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="{% url 'ecomapp:mobile' %}">Mobile</a>
-                <a class="dropdown-item" href="#">Accessories</a>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'ecomapp:mycart' %}">Cart</a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                My Account
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                {% if request.user.customer %}
-                <a class="dropdown-item" href="{% url 'ecomapp:customerprofile' %}">My Profile</a>
-                <a class="dropdown-item" href="{% url 'ecomapp:customerlogout' %}">Logout</a>
-                {% else %}
-                <a class="dropdown-item" href="{% url 'ecomapp:customerregistration' %}">Register</a>
-                <a class="dropdown-item" href="{% url 'ecomapp:customerlogin' %}">Login</a>
-                {% endif %}
-                </div>
-            </li>
-            </ul>
-        </div>
+            <div class="collapse navbar-collapse" id="navbarToggleExternalContent">
+                <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'ecomapp:home' %}">Home</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'ecomapp:tracking' %}">Track My Order</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Electronics
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="{% url 'ecomapp:mobile' %}">Mobile</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'ecomapp:mycart' %}">Cart</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    My Account
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    {% if request.user.customer %}
+                    <a class="dropdown-item" href="{% url 'ecomapp:customerprofile' %}">My Profile</a>
+                    <a class="dropdown-item" href="{% url 'ecomapp:customerlogout' %}">Logout</a>
+                    {% else %}
+                    <a class="dropdown-item" href="{% url 'ecomapp:customerregistration' %}">Register</a>
+                    <a class="dropdown-item" href="{% url 'ecomapp:customerlogin' %}">Login</a>
+                    {% endif %}
+                    </div>
+                </li>
+                </ul>
+            </div>
         </nav>
-   
+    </header>
     <div class="container">
         {% block content %}
         {% endblock %}
@@ -76,7 +76,7 @@
 
     <!-- Start Footer -->
     <footer class="container-fluid bg-dark text-center p-2 mt-5">
-        <small class="text-white">Facebook: Mina Gadget || Contact Number: 09758469367 || </small>
+        <small class="text-white">Facebook: Mina Gadget || Contact Number: 09758469322 </small>
     </footer>
     <!-- End Footer -->
 </body>
