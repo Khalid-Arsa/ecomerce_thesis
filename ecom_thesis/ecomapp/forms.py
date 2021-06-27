@@ -7,18 +7,23 @@ from creditcards.forms import CardNumberField, CardExpiryField, SecurityCodeFiel
 
 
 class CheckoutForm(forms.ModelForm):
-    fullname = forms.CharField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control'}))
-    barangay = forms.CharField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control'}))
+    fullname = forms.CharField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control',
+                                                             'value': 'Elijah Abgao'}))
+    barangay = forms.CharField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control',
+                                                             'value': 'Lumbia'}))
     street = forms.CharField(widget=forms.TextInput(
-        attrs={'autofocus': True, 'class': 'form-control', 'placeholder': 'Building, street and etc'}))
-    city = forms.CharField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control'}))
-    province = forms.CharField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control'}))
+        attrs={'autofocus': True, 'class': 'form-control', 'placeholder': 'Building, street and etc',
+               'value': 'Block 12'}))
+    city = forms.CharField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control',
+                                                         'value': 'Cagayan'}))
+    province = forms.CharField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control',
+                                                             'value': 'Foobar'}))
     postal = forms.CharField(
-        widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control'}))
+        widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control', 'value': '9000'}))
     mobile = forms.IntegerField(
-        widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control'}))
+        widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control', 'value': '09953875103'}))
     email = forms.CharField(
-        widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control'}))
+        widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control', 'value': 'abgaoe@gmail.com'}))
 
     class Meta:
         model = Order
