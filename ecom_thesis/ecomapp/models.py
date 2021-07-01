@@ -145,7 +145,7 @@ class Order(models.Model):
     order_status = models.CharField(max_length=50, choices=ORDER_STATUS)
     created_at = models.DateTimeField(auto_now_add=True)
     payment_completed = models.BooleanField(default=False, null=True, blank=True)
-    number = models.CharField(max_length=20)
+    number = models.CharField(max_length=100)
     transaction_id = models.CharField(max_length=255)
 
     def __str__(self):

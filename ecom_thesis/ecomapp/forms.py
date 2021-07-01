@@ -52,7 +52,7 @@ class CustomerLoginForm(forms.Form):
 
 
 class TrackingForm(forms.ModelForm):
-    number = forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter the tracking number here..."})
+    number = forms.CharField(widget=forms.TextInput(attrs={'maxlength':100, "class": "form-control", "placeholder": "Enter the tracking number here..."}))
     class Meta:
         model = Order
         fields = ["number"]
