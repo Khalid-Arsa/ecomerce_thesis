@@ -52,15 +52,10 @@ class CustomerLoginForm(forms.Form):
 
 
 class TrackingForm(forms.ModelForm):
+    number = forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter the tracking number here..."})
     class Meta:
         model = Order
         fields = ["number"]
-        widgets = {
-            "number": forms.TextInput(attrs={
-                "class": "form-control",
-                "placeholder": "Enter the tracking number here..."
-            })
-        }
 
 
 class CreditCardForm(forms.Form):

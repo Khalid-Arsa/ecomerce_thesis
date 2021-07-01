@@ -20,7 +20,7 @@ from django.conf import settings
 from django.http import JsonResponse
 from paymongo import Paymongo
 
-secret_key = "sk_test_qmxKFFtQ6cNao7vr9mT4X3xQ"
+secret_key = "sk_test_aZneKHAGmDyZFXcanMoJ2haj"
 
 
 class EcomMixin(object):
@@ -519,7 +519,6 @@ class MyOrderView(TemplateView):
         orders = Order.objects.filter(cart__customer=customer).order_by("-id")
         context["orders"] = orders
         return context
-
 
 class CustomerOrderDetailView(DetailView):
     template_name = "customerorderdetail.html"
